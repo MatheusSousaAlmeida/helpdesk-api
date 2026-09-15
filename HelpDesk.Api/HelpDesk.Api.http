@@ -1,0 +1,6 @@
+@HelpDesk_Api_HostAddress = http://localhost:5095
+GET {{HelpDesk_Api_HostAddress}}/health/live
+Accept: application/json
+###
+GET {{HelpDesk_Api_HostAddress}}/api/chamados?pageNumber=1&pageSize=10
+Accept: application/json
