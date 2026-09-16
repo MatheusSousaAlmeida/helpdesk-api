@@ -454,7 +454,7 @@ A API utiliza Health Checks para monitorar sua própria disponibilidade e a cone
 Verifica se a aplicação está em execução.
 
 ```http
-GET api/health/live
+GET /api/health/live
 ```
 
 ## Banco de dados
@@ -462,7 +462,7 @@ GET api/health/live
 Verifica a disponibilidade do Oracle.
 
 ```http
-GET api/health/db
+GET /api/health/db
 ```
 
 Quando saudável:
@@ -615,7 +615,7 @@ Exemplo:
 ```json
 {
   "ConnectionStrings": {
-    "Oracle": "Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=oracle.fiap.com.br)(PORT=1521))) (CONNECT_DATA=(SERVER=DEDICATED)(SID=ORCL)));User Id=SEU_ID_LOGIN;Password=SUA_SENHA;"
+    "OracleDbConnection": "Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=oracle.fiap.com.br)(PORT=1521))) (CONNECT_DATA=(SERVER=DEDICATED)(SID=ORCL)));User Id=SEU_ID_LOGIN;Password=SUA_SENHA;"
   }
 }
 ```
@@ -839,6 +839,34 @@ GET /api/chamados?pageNumber=2&pageSize=5
 GET /api/chamados/1
 ```
 
+### Listar chamados por usuário
+
+```http
+GET /api/chamados/usuario/{idUsuario}?pageNumber=1&pageSize=10
+```
+
+Exemplo:
+
+```http
+GET /api/chamados/usuario/1?pageNumber=1&pageSize=10
+```
+
+Retorna os chamados associados ao usuário informado, utilizando paginação.
+
+### Listar chamados por técnico
+
+```http
+GET /api/chamados/tecnico/{idTecnico}?pageNumber=1&pageSize=10
+```
+
+Exemplo:
+
+```http
+GET /api/chamados/tecnico/1?pageNumber=1&pageSize=10
+```
+
+Retorna os chamados atribuídos ao técnico informado, utilizando paginação.
+
 ### Criar chamado
 
 ```http
@@ -889,6 +917,20 @@ GET /api/comentarios?pageNumber=1&pageSize=10
 GET /api/comentarios/1
 ```
 
+### Listar comentários de um chamado
+
+```http
+GET /api/comentarios/chamado/{idChamado}?pageNumber=1&pageSize=10
+```
+
+Exemplo:
+
+```http
+GET /api/comentarios/chamado/1?pageNumber=1&pageSize=10
+```
+
+Retorna os comentários associados ao chamado informado, utilizando paginação.
+
 ### Criar comentário
 
 ```http
@@ -925,13 +967,13 @@ DELETE /api/comentarios/1
 ### Verificar API
 
 ```http
-GET /health/live
+GET /api/health/live
 ```
 
 ### Verificar banco
 
 ```http
-GET /health/db
+GET /api/health/db
 ```
 
 ---
