@@ -16,7 +16,11 @@ namespace HelpDesk.API.Presentation.Controllers
         }
 
         [HttpGet("live")]
-        [SwaggerOperation(Summary = "Liveness da API")]
+        [SwaggerOperation(
+            Summary = "Liveness da API",
+            Description = "Verifica se a API esta em execucao.")]
+        [SwaggerResponse(StatusCodes.Status200OK, "API saudavel")]
+        [SwaggerResponse(StatusCodes.Status503ServiceUnavailable,"API indisponivel")]
         public async Task<IActionResult> Live(CancellationToken ct)
         {
             var report = await _healthService.CheckHealthAsync(r => r.Tags.Contains("live"), ct);
@@ -27,7 +31,11 @@ namespace HelpDesk.API.Presentation.Controllers
         }
 
         [HttpGet("db")]
-        [SwaggerOperation(Summary = "Readiness do banco Oracle")]
+        [SwaggerOperation(
+            Summary = "Readiness do banco Oracle",
+            Description = "Verifica a disponibilidade da conexao com o banco Oracle.")]
+        [SwaggerResponse(StatusCodes.Status200OK,"Banco Oracle disponivel")]
+        [SwaggerResponse(StatusCodes.Status503ServiceUnavailable,"Banco Oracle indisponivel")]
         public async Task<IActionResult> Database(CancellationToken ct)
         {
             var report = await _healthService.CheckHealthAsync(r => r.Tags.Contains("db"), ct);
