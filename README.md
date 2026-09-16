@@ -1,320 +1,1067 @@
-# HelpDesk API - CP4 Advanced Business Development with .NET
+# HelpDesk API
 
-API RESTful para gerenciamento de chamados de suporte de TI, desenvolvida em .NET 8 com Controllers e organizada em camadas seguindo o mesmo padrao estrutural utilizado no projeto de referencia da disciplina.
+API RESTful desenvolvida em **ASP.NET Core .NET 8** para gerenciamento de chamados de suporte de TI.
 
-## Estrutura da solution
+O projeto foi desenvolvido como parte do **CP4 - Advanced Business Development with .NET - 2026**, com foco em arquitetura em camadas, otimização de performance, resiliência, testes automatizados e observabilidade.
+
+A aplicação permite cadastrar usuários e técnicos, abrir e gerenciar chamados, atribuir técnicos responsáveis e registrar comentários associados aos atendimentos.
+
+---
+
+# 📋 Descrição do Projeto
+
+O **HelpDesk API** tem como objetivo fornecer uma API para gerenciamento de chamados de suporte técnico.
+
+O sistema trabalha com quatro entidades principais:
+
+- **Usuário**: pessoa responsável pela abertura do chamado.
+- **Técnico**: profissional responsável pelo atendimento.
+- **Chamado**: solicitação de suporte registrada no sistema.
+- **Comentário**: interação ou observação registrada durante o atendimento.
+
+Um chamado possui informações como:
+
+- Título
+- Descrição
+- Prioridade
+- Status
+- Usuário solicitante
+- Técnico responsável
+- Data de abertura
+- Data de atualização
+- Data de fechamento
+
+O fluxo principal de status de um chamado é:
+
+```text
+Aberto
+   ↓
+Em Atendimento
+   ↓
+Resolvido
+   ↓
+Fechado
+```
+
+Algumas regras de negócio implementadas:
+
+- Um chamado sempre é criado inicialmente com status `Aberto`.
+- Apenas usuários ativos podem abrir chamados.
+- Apenas técnicos ativos podem ser atribuídos a chamados.
+- Um chamado não pode ser fechado diretamente sem ter sido resolvido.
+- Chamados fechados não podem ser alterados.
+- Comentários não podem ser adicionados a chamados fechados.
+- A data de fechamento é preenchida automaticamente quando o chamado é finalizado.
+
+---
+
+# 🏗️ Arquitetura
+
+O projeto utiliza uma organização em camadas inspirada nos conceitos de **Clean Architecture**, separando responsabilidades dentro da aplicação.
+
+A Solution possui dois projetos:
 
 ```text
 HelpDesk.sln
-|-- HelpDesk.Api
-|   |-- Application
-|   |   |-- Dtos
-|   |   |-- Interfaces
-|   |   |-- Mappers
-|   |   `-- UseCases
-|   |-- Domain
-|   |   |-- Entities
-|   |   `-- Interfaces
-|   |-- Doc
-|   |   `-- Samples
-|   |-- Infrastructure
-|   |   |-- Data
-|   |   |   |-- Migrations
-|   |   |   `-- Repositories
-|   |   |-- IoC
-|   |   `-- Observability
-|   |-- Presentation
-|   |   `-- Controllers
-|   `-- Program.cs
-`-- HelpDesk.Tests
-    |-- Application
-    |-- Controllers
-    |-- Domain
-    |-- Fixtures
-    |-- HealthChecks
-    |-- Infrastructure
-    `-- RateLimit
+│
+├── HelpDesk.Api
+│
+└── HelpDesk.Tests
 ```
 
-## Entidades
+A API está organizada da seguinte maneira:
 
-- **Usuario**: solicitante que abre chamados.
-- **Tecnico**: profissional responsavel pelo atendimento.
-- **Chamado**: registro principal do atendimento.
-- **Comentario**: interacao registrada no chamado.
+```text
+HelpDesk.Api/
+│
+├── Application/
+│   ├── Dtos/
+│   ├── Interfaces/
+│   ├── Mappers/
+│   └── UseCases/
+│
+├── Domain/
+│   ├── Entities/
+│   └── Interfaces/
+│
+├── Infrastructure/
+│   ├── Data/
+│   │   ├── Migrations/
+│   │   └── Repositories/
+│   ├── IoC/
+│   └── Observability/
+│
+├── Presentation/
+│   └── Controllers/
+│
+├── Doc/
+│   └── Samples/
+│
+├── Program.cs
+├── appsettings.json
+└── HelpDesk.Api.csproj
+```
 
-### Relacionamentos
+## Domain
 
-- Usuario 1:N Chamado
-- Tecnico 1:N Chamado
-- Chamado 1:N Comentario
+Responsável pelas entidades e pelos contratos dos repositories.
 
-## Regras de negocio implementadas
+Principais entidades:
 
-- Somente usuario ativo pode abrir chamado.
-- Tecnico informado deve existir e estar ativo.
-- Todo novo chamado inicia com status `Aberto`.
-- Prioridades aceitas: `Baixa`, `Media`, `Alta`, `Critica`.
-- Fluxo de status: `Aberto -> Em Atendimento -> Resolvido -> Fechado`.
-- Chamado fechado nao pode ser alterado.
-- Ao fechar um chamado, `DataFechamento` e preenchida automaticamente.
-- Chamado fechado nao pode receber novos comentarios.
+```text
+Usuario
+Tecnico
+Chamado
+Comentario
+```
 
-## Requisitos do CP4 atendidos
+## Application
 
-### Repository Pattern, DTOs e Mappers
+Responsável pelas regras e fluxos da aplicação.
 
-As interfaces de repository ficam em `Domain/Interfaces`, implementacoes em `Infrastructure/Data/Repositories`, DTOs e mapeamentos em `Application`.
+Contém:
 
-### Paginacao
+- DTOs
+- Mappers
+- Interfaces dos UseCases
+- Implementação dos UseCases
 
-Endpoints de listagem recebem:
+Fluxo principal:
+
+```text
+Controller
+    ↓
+UseCase
+    ↓
+Repository
+    ↓
+Entity Framework
+    ↓
+Banco de Dados
+```
+
+## Infrastructure
+
+Responsável pelo acesso a dados e recursos de infraestrutura.
+
+Contém:
+
+- `ApplicationContext`
+- Repository Pattern
+- Migrations
+- IoC / Dependency Injection
+- Métricas e observabilidade
+
+## Presentation
+
+Responsável pelos endpoints HTTP da API.
+
+Contém os Controllers:
+
+```text
+UsuariosController
+TecnicosController
+ChamadosController
+ComentariosController
+HealthController
+```
+
+---
+
+# 🧩 Componentes Utilizados
+
+## .NET 8
+
+A aplicação utiliza:
+
+```text
+.NET 8
+ASP.NET Core Web API
+Controllers
+```
+
+---
+
+## Entity Framework Core
+
+O **Entity Framework Core** é utilizado como ORM para persistência e consulta dos dados.
+
+Banco utilizado:
+
+```text
+Oracle
+```
+
+O acesso ao banco é realizado através do:
+
+```text
+ApplicationContext
+```
+
+---
+
+## Repository Pattern
+
+Cada entidade possui uma interface de repository na camada Domain e sua implementação na Infrastructure.
+
+Exemplo:
+
+```text
+IChamadoRepository
+        ↓
+ChamadoRepository
+```
+
+O objetivo é separar a lógica de negócio da implementação de acesso ao banco.
+
+---
+
+# 📦 DTOs e Mapeamentos
+
+Os dados recebidos pela API são tratados através de DTOs.
+
+Exemplos:
+
+```text
+UsuarioRequestDto
+TecnicoRequestDto
+ChamadoRequestDto
+ComentarioRequestDto
+```
+
+Os Mappers realizam a conversão entre DTOs e entidades.
+
+Exemplo:
+
+```text
+ChamadoRequestDto
+        ↓
+ChamadoMapper
+        ↓
+Chamado
+```
+
+---
+
+# 📄 Paginação
+
+Os endpoints de listagem possuem paginação utilizando:
+
+```text
+pageNumber
+pageSize
+```
+
+Exemplo:
 
 ```http
 GET /api/chamados?pageNumber=1&pageSize=10
 ```
 
-`PageSize` e limitado a 100 na camada de Application e os repositories aplicam `Skip` e `Take`.
+A paginação é aplicada no Repository através de:
 
-### Indices de banco
+```csharp
+.Skip((pageNumber - 1) * pageSize)
+.Take(pageSize)
+```
 
-Os indices sao declarados diretamente nas entidades com o atributo `[Index]`, seguindo o exemplo apresentado em aula, e sao materializados no banco pela migration inicial. Entre eles:
+O tamanho máximo de página é controlado pela aplicação para evitar consultas excessivamente grandes.
 
-- `UX_USUARIO_EMAIL` (unique)
-- `UX_TECNICO_EMAIL` (unique)
-- `IX_CHAMADO_STATUS`
-- `IX_CHAMADO_PRIORIDADE`
-- `IX_CHAMADO_STATUS_PRIORIDADE` (composto)
-- `IX_CHAMADO_USUARIO`
-- `IX_CHAMADO_TECNICO`
-- `IX_CHAMADO_DATA_ABERTURA`
-- `IX_COMENTARIO_CHAMADO`
+---
 
-### Response Compression
+# ⚡ Índices de Banco de Dados
 
-Configurada no `Program.cs` com Brotli e Gzip, inclusive para HTTPS.
+Foram configurados índices nas entidades para melhorar o desempenho das principais consultas.
 
-### Rate Limiting
+Exemplos:
 
-Fixed Window com a politica nomeada `politica_5_tentativas`, aplicada nos endpoints de listagem por `[EnableRateLimiting]` e particionada pelo endereco IP do cliente.
+- E-mail do usuário
+- E-mail do técnico
+- Status do chamado
+- Prioridade do chamado
+- Status + prioridade
+- Relacionamentos entre chamados, usuários e técnicos
 
-A politica e configurada diretamente no `Program.cs`, seguindo o exemplo utilizado em aula:
+Exemplo de índice composto:
 
-- `PermitLimit = 5`
-- `Window = 20 segundos`
-- `QueueLimit = 0`
-- retorno `429 Too Many Requests` ao exceder o limite
+```text
+Status + Prioridade
+```
 
-Na sexta requisicao do mesmo IP dentro da mesma janela, a API retorna:
+Esse índice auxilia consultas como:
+
+```text
+Chamados com status "Aberto"
+e prioridade "Crítica"
+```
+
+---
+
+# 🗜️ Response Compression
+
+A API utiliza compressão de resposta para reduzir o tamanho dos dados enviados ao cliente.
+
+São utilizados os algoritmos:
+
+```text
+Brotli
+Gzip
+```
+
+A compressão também está habilitada para conexões HTTPS.
+
+---
+
+# 🚦 Rate Limiting
+
+A aplicação possui proteção contra excesso de requisições utilizando o middleware nativo de Rate Limiting do ASP.NET Core.
+
+A política utilizada é:
+
+```text
+politica_5_tentativas
+```
+
+Configuração:
+
+```text
+5 requisições
+por cliente/IP
+a cada 20 segundos
+```
+
+Ao ultrapassar o limite, a API retorna:
 
 ```http
 429 Too Many Requests
 ```
 
-### Swagger
+A política é aplicada aos endpoints através de:
 
-Swagger/OpenAPI habilitado com `SwaggerOperation`, `SwaggerResponse`, `SwaggerParameter`, `SwaggerRequestExample` e `SwaggerResponseExample`. O projeto usa `Swashbuckle.AspNetCore.Filters` e providers em `Doc/Samples`, seguindo o padrao do exemplo do professor.
+```csharp
+[EnableRateLimiting("politica_5_tentativas")]
+```
 
-As listagens tambem documentam `204 No Content` quando nao ha registros.
+---
 
-Em desenvolvimento, execute a API e abra `/swagger`.
+# 📖 Swagger / OpenAPI
 
-### Logging e Serilog
+A documentação dos endpoints é disponibilizada através do Swagger.
 
-- `ILogger<T>` nos Controllers e UseCases.
-- `Information`, `Warning` e `Error` nos fluxos principais.
-- Serilog no console.
-- Arquivo diario em `logs/api-AAAA-MM-DD.log`.
-- Retencao de 7 arquivos.
-- Correlation ID no header `X-Correlation-ID`.
+A aplicação utiliza:
 
-### Health Checks
+```text
+Swashbuckle.AspNetCore
+Swashbuckle.AspNetCore.Annotations
+Swashbuckle.AspNetCore.Filters
+```
 
-Endpoints de middleware:
+Os Controllers possuem:
+
+- `SwaggerOperation`
+- `SwaggerResponse`
+- `SwaggerParameter`
+- Exemplos de Request
+- Exemplos de Response
+
+Ao executar o projeto em ambiente de desenvolvimento, acesse:
+
+```text
+/swagger
+```
+
+---
+
+# 📝 Logging
+
+O projeto utiliza o sistema nativo:
+
+```text
+ILogger<T>
+```
+
+em Controllers e UseCases.
+
+São utilizados principalmente os níveis:
+
+```text
+Information
+Warning
+Error
+```
+
+Exemplo:
+
+```csharp
+_logger.LogInformation(
+    "Obtendo chamado com id {ChamadoId}",
+    id);
+```
+
+Quando um chamado não é encontrado:
+
+```csharp
+_logger.LogWarning(
+    "Chamado com id {ChamadoId} não encontrado",
+    id);
+```
+
+Em situações de erro:
+
+```csharp
+_logger.LogError(
+    ex,
+    "Erro ao obter chamado com id {ChamadoId}",
+    id);
+```
+
+---
+
+# 📂 Serilog
+
+Além do `ILogger<T>`, o projeto utiliza **Serilog**.
+
+Os logs são enviados para:
+
+```text
+Console
++
+Arquivo
+```
+
+Os arquivos ficam no diretório:
+
+```text
+logs/
+```
+
+Exemplo:
+
+```text
+logs/api-20260915.log
+```
+
+Os arquivos possuem rotação diária e retenção configurada.
+
+---
+
+# ❤️ Health Checks
+
+A API utiliza Health Checks para monitorar sua própria disponibilidade e a conexão com o banco de dados.
+
+## Liveness
+
+Verifica se a aplicação está em execução.
 
 ```http
-GET /health
 GET /health/live
-GET /health/db
-```
-
-Endpoints detalhados via controller:
-
-```http
-GET /api/health/live
-GET /api/health/db
-```
-
-`live` valida a propria API e `db` valida o Oracle.
-
-### OpenTelemetry e Application Insights
-
-A API utiliza OpenTelemetry para traces e metricas e integra o Azure Monitor/Application Insights atraves de `UseAzureMonitor`.
-
-Configure em `appsettings.json` ou por configuracao externa:
-
-```json
-"ApplicationInsights": {
-  "ConnectionString": "SUA_CONNECTION_STRING"
-}
-```
-
-Nao publique uma connection string real em repositorio publico.
-
-Metricas customizadas:
-
-- `helpdesk.api.requests`
-- `helpdesk.api.errors`
-- `helpdesk.api.response_time`
-- `helpdesk.chamados.criados`
-- `helpdesk.api.error_rate`
-- `helpdesk.api.average_response_time`
-
-Snapshot local:
-
-```http
-GET /metrics
 ```
 
 ## Banco de dados
 
-O projeto utiliza Oracle com `Oracle.EntityFrameworkCore`, seguindo o projeto de referencia.
+Verifica a disponibilidade do Oracle.
 
-Configure:
+```http
+GET /health/db
+```
+
+Quando saudável:
+
+```http
+200 OK
+```
+
+Quando uma dependência crítica não está disponível:
+
+```http
+503 Service Unavailable
+```
+
+---
+
+# 📊 Observabilidade
+
+A aplicação utiliza **OpenTelemetry** para coleta de:
+
+- Traces
+- Métricas
+- Requisições ASP.NET Core
+- Chamadas HTTP
+- Métricas personalizadas da API
+
+Exemplos de métricas:
+
+```text
+helpdesk.api.requests
+helpdesk.api.errors
+helpdesk.api.response_time
+helpdesk.chamados.criados
+```
+
+---
+
+# ☁️ Application Insights
+
+A telemetria coletada através do OpenTelemetry pode ser enviada ao **Azure Application Insights**.
+
+Pacotes utilizados:
+
+```text
+Microsoft.ApplicationInsights.AspNetCore
+Azure.Monitor.OpenTelemetry.AspNetCore
+```
+
+A integração é realizada através do:
+
+```csharp
+UseAzureMonitor()
+```
+
+## Criando o recurso
+
+No Portal do Azure:
+
+```text
+Azure
+→ Application Insights
+→ Create
+```
+
+Após criar o recurso, copie a:
+
+```text
+Connection String
+```
+
+---
+
+## Configuração
+
+O projeto utiliza a configuração:
 
 ```json
-"ConnectionStrings": {
-  "OracleDbConnection": "User Id=USUARIO;Password=SENHA;Data Source=HOST:1521/SERVICE_NAME"
+{
+  "ApplicationInsights": {
+    "ConnectionString": ""
+  }
 }
 ```
 
-A aplicacao tenta aplicar as migrations ao iniciar quando a connection string estiver preenchida.
+Não é recomendado armazenar a Connection String real no repositório público.
 
-Para trabalhar manualmente com migrations:
+### Utilizando User Secrets
+
+No Visual Studio:
+
+```text
+HelpDesk.Api
+→ botão direito
+→ Manage User Secrets
+```
+
+Adicione:
+
+```json
+{
+  "ApplicationInsights": {
+    "ConnectionString": "SUA_CONNECTION_STRING"
+  }
+}
+```
+
+Ou através do terminal:
 
 ```bash
-dotnet ef database update --project HelpDesk.Api
+dotnet user-secrets init
 ```
 
-## Principais endpoints
+```bash
+dotnet user-secrets set "ApplicationInsights:ConnectionString" "SUA_CONNECTION_STRING"
+```
 
-| Metodo | Endpoint | Descricao |
-|---|---|---|
-| GET | `/api/usuarios?pageNumber=1&pageSize=10` | Lista usuarios |
-| GET | `/api/usuarios/{id}` | Busca usuario |
-| POST | `/api/usuarios` | Cadastra usuario |
-| PUT | `/api/usuarios/{id}` | Atualiza usuario |
-| DELETE | `/api/usuarios/{id}` | Exclui usuario |
-| GET | `/api/tecnicos?pageNumber=1&pageSize=10` | Lista tecnicos |
-| POST | `/api/tecnicos` | Cadastra tecnico |
-| GET | `/api/chamados?pageNumber=1&pageSize=10` | Lista chamados |
-| GET | `/api/chamados/{id}` | Busca chamado |
-| GET | `/api/chamados/usuario/{id}` | Chamados do usuario |
-| GET | `/api/chamados/tecnico/{id}` | Chamados do tecnico |
-| POST | `/api/chamados` | Abre chamado |
-| PUT | `/api/chamados/{id}` | Atualiza chamado/status |
-| GET | `/api/comentarios/chamado/{id}` | Comentarios do chamado |
-| POST | `/api/comentarios` | Adiciona comentario |
+---
 
-## Exemplo de requisicoes
+## Validando no Azure
 
-### Usuario
+Após iniciar a aplicação e realizar algumas requisições, é possível acompanhar as informações em:
+
+```text
+Application Insights
+→ Live Metrics
+```
+
+Também é possível consultar os dados através da área:
+
+```text
+Application Insights
+→ Logs
+```
+
+Exemplo para visualizar requisições:
+
+```kusto
+requests
+| where timestamp > ago(30m)
+| order by timestamp desc
+```
+
+Exemplo para visualizar logs:
+
+```kusto
+traces
+| where timestamp > ago(30m)
+| order by timestamp desc
+```
+
+Exemplo para visualizar métricas personalizadas:
+
+```kusto
+customMetrics
+| where timestamp > ago(30m)
+| where name startswith "helpdesk."
+| order by timestamp desc
+```
+
+---
+
+# 🗄️ Configuração do Banco de Dados
+
+A aplicação utiliza Oracle através do Entity Framework Core.
+
+A Connection String deve ser configurada em:
+
+```text
+appsettings.Development.json
+```
+
+Exemplo:
 
 ```json
 {
-  "idUsuario": 1,
-  "nome": "Joao Silva",
-  "email": "joao@empresa.com",
-  "departamento": "Financeiro",
-  "ativo": true
+  "ConnectionStrings": {
+    "Oracle": "SUA_CONNECTION_STRING_ORACLE"
+  }
 }
 ```
 
-### Tecnico
+Substitua pelo endereço, porta, service name e credenciais do ambiente utilizado.
 
-```json
-{
-  "idTecnico": 1,
-  "nome": "Ana Tecnica",
-  "email": "ana@empresa.com",
-  "especialidade": "Sistemas",
-  "ativo": true
-}
+Não publique credenciais reais no GitHub.
+
+---
+
+# 🛠️ Preparação do Ambiente
+
+É necessário possuir:
+
+```text
+.NET SDK 8
+Visual Studio 2022
+Oracle acessível
 ```
 
-### Chamado
+Para confirmar a instalação do SDK:
 
-```json
-{
-  "idChamado": 1,
-  "idUsuario": 1,
-  "idTecnico": 1,
-  "titulo": "Erro de acesso ao ERP",
-  "descricao": "Usuario nao consegue autenticar no sistema.",
-  "prioridade": "Alta"
-}
+```bash
+dotnet --list-sdks
 ```
 
-Para avancar o chamado para o proximo status, envie `PUT /api/chamados/{id}` com os dados do chamado e `status`, respeitando o fluxo definido.
+Deve existir pelo menos uma versão:
 
-## Executando o projeto
+```text
+8.0.xxx
+```
 
-Pre-requisitos:
+---
 
-- .NET SDK 8
-- Oracle acessivel para a execucao completa dos endpoints persistentes
+# ▶️ Como Rodar o Projeto
 
-Restaurar e compilar:
+Clone o repositório:
+
+```bash
+git clone URL_DO_REPOSITORIO
+```
+
+Entre na pasta:
+
+```bash
+cd helpdesk-api
+```
+
+Restaure os pacotes:
 
 ```bash
 dotnet restore
+```
+
+Compile:
+
+```bash
 dotnet build
 ```
 
-Executar:
+Execute a API:
 
 ```bash
 dotnet run --project HelpDesk.Api
 ```
 
-## Testes
+Ou abra:
 
-Todos os testes estao concentrados em `HelpDesk.Tests`, mas organizados por categoria.
+```text
+HelpDesk.sln
+```
 
-Executar:
+no Visual Studio 2022 e execute o projeto `HelpDesk.Api`.
+
+---
+
+# 🧪 Testes Automatizados
+
+O projeto possui um único projeto de testes:
+
+```text
+HelpDesk.Tests
+```
+
+Nele são implementados:
+
+- Testes de UseCases
+- Testes das regras de negócio
+- Testes de Repository
+- Testes dos Controllers
+- Testes de integração
+- Testes de Health Check
+- Testes de Rate Limit
+- Testes de paginação
+
+Para executar toda a suíte:
 
 ```bash
 dotnet test
 ```
 
-A suite cobre, entre outros cenarios:
+Ou:
 
-- regras de criacao e status do chamado;
-- bloqueio de usuario inativo;
-- prioridade invalida;
-- fechamento permitido somente apos resolucao;
-- comentario em chamado fechado;
-- paginacao no repository;
-- ciclo HTTP basico da API;
-- Health Check;
-- Rate Limit por politica nomeada/IP e retorno 429.
-- retorno 204 em listagem vazia.
+```bash
+dotnet test HelpDesk.Tests/HelpDesk.Tests.csproj
+```
 
-Os testes de repository utilizam EF Core InMemory. Os testes funcionais de Controllers usam `WebApplicationFactory` e mocks dos UseCases, seguindo o padrao do projeto de referencia, para validar o ciclo HTTP sem depender do Oracle.
+O resultado esperado é que todos os testes sejam apresentados como:
 
-## Demonstracao sugerida
+```text
+Passed
+```
 
-1. Abrir Swagger.
-2. Cadastrar usuario e tecnico.
-3. Abrir chamado.
-4. Demonstrar paginacao.
-5. Demonstrar uma transicao invalida de status.
-6. Fazer requisicoes repetidas e mostrar `429 Too Many Requests`.
-7. Mostrar `/health/live` e `/health/db`.
-8. Executar `dotnet test`.
-9. Mostrar logs no console/arquivo.
-10. Mostrar requisicoes, traces e metricas no Application Insights.
+---
 
-## Seguranca de configuracao
+# 🌐 Endpoints
 
-Nao versionar credenciais reais de Oracle ou Application Insights. Utilize configuracao local, variaveis de ambiente ou User Secrets.
+## Usuários
+
+### Listar usuários
+
+```http
+GET /api/usuarios?pageNumber=1&pageSize=10
+```
+
+### Buscar usuário por ID
+
+```http
+GET /api/usuarios/1
+```
+
+### Criar usuário
+
+```http
+POST /api/usuarios
+```
+
+Exemplo:
+
+```json
+{
+  "idUsuario": 1,
+  "nome": "João da Silva",
+  "email": "joao.silva@empresa.com",
+  "departamento": "Financeiro",
+  "ativo": true
+}
+```
+
+### Atualizar usuário
+
+```http
+PUT /api/usuarios/1
+```
+
+### Excluir usuário
+
+```http
+DELETE /api/usuarios/1
+```
+
+---
+
+# 👨‍💻 Técnicos
+
+### Listar técnicos
+
+```http
+GET /api/tecnicos?pageNumber=1&pageSize=10
+```
+
+### Buscar técnico
+
+```http
+GET /api/tecnicos/1
+```
+
+### Criar técnico
+
+```http
+POST /api/tecnicos
+```
+
+Exemplo:
+
+```json
+{
+  "idTecnico": 1,
+  "nome": "Maria Souza",
+  "email": "maria.souza@empresa.com",
+  "especialidade": "Infraestrutura",
+  "ativo": true
+}
+```
+
+### Atualizar técnico
+
+```http
+PUT /api/tecnicos/1
+```
+
+### Excluir técnico
+
+```http
+DELETE /api/tecnicos/1
+```
+
+---
+
+# 🎫 Chamados
+
+### Listar chamados
+
+```http
+GET /api/chamados?pageNumber=1&pageSize=10
+```
+
+Exemplo:
+
+```http
+GET /api/chamados?pageNumber=2&pageSize=5
+```
+
+### Buscar chamado
+
+```http
+GET /api/chamados/1
+```
+
+### Criar chamado
+
+```http
+POST /api/chamados
+```
+
+Exemplo:
+
+```json
+{
+  "idChamado": 1,
+  "idUsuario": 1,
+  "idTecnico": null,
+  "titulo": "Computador sem acesso à internet",
+  "descricao": "Usuário não consegue acessar a rede corporativa.",
+  "prioridade": "Alta",
+  "status": "Aberto"
+}
+```
+
+O status inicial é controlado pela aplicação.
+
+### Atualizar chamado
+
+```http
+PUT /api/chamados/1
+```
+
+### Excluir chamado
+
+```http
+DELETE /api/chamados/1
+```
+
+---
+
+# 💬 Comentários
+
+### Listar comentários
+
+```http
+GET /api/comentarios?pageNumber=1&pageSize=10
+```
+
+### Buscar comentário
+
+```http
+GET /api/comentarios/1
+```
+
+### Criar comentário
+
+```http
+POST /api/comentarios
+```
+
+Exemplo:
+
+```json
+{
+  "idComentario": 1,
+  "idChamado": 1,
+  "autor": "Maria Souza",
+  "texto": "Foi identificado um problema na configuração de rede."
+}
+```
+
+### Atualizar comentário
+
+```http
+PUT /api/comentarios/1
+```
+
+### Excluir comentário
+
+```http
+DELETE /api/comentarios/1
+```
+
+---
+
+# ❤️ Health Check
+
+### Verificar API
+
+```http
+GET /health/live
+```
+
+### Verificar banco
+
+```http
+GET /health/db
+```
+
+---
+
+# 🚦 Exemplo de Rate Limit
+
+A política permite:
+
+```text
+5 requisições em 20 segundos
+```
+
+Quando o limite é ultrapassado:
+
+```http
+HTTP/1.1 429 Too Many Requests
+```
+
+Exemplo de demonstração:
+
+```text
+Requisição 1 → 200
+Requisição 2 → 200
+Requisição 3 → 200
+Requisição 4 → 200
+Requisição 5 → 200
+Requisição 6 → 429
+```
+
+---
+
+# 📌 Principais Tecnologias
+
+```text
+.NET 8
+ASP.NET Core Web API
+Entity Framework Core
+Oracle
+Repository Pattern
+DTOs
+Mappers
+Swagger / OpenAPI
+Swagger Annotations
+Swagger Filters
+Response Compression
+Rate Limiting
+Serilog
+ILogger
+Health Checks
+OpenTelemetry
+Azure Monitor
+Application Insights
+xUnit
+Moq
+EF Core InMemory
+WebApplicationFactory
+```
+
+---
+
+# ✅ Requisitos Implementados
+
+| Requisito | Implementado |
+|---|---|
+| Organização em Domain, Application, Infrastructure e Presentation | ✅ |
+| Repository Pattern | ✅ |
+| DTOs | ✅ |
+| Mapeamentos | ✅ |
+| Paginação | ✅ |
+| Índices de banco | ✅ |
+| Response Compression | ✅ |
+| Rate Limiting | ✅ |
+| Swagger avançado | ✅ |
+| Testes unitários | ✅ |
+| Testes funcionais/integração | ✅ |
+| Logging estruturado | ✅ |
+| Serilog | ✅ |
+| Health Checks | ✅ |
+| OpenTelemetry | ✅ |
+| Application Insights | ✅ |
+| README | ✅ |
+
+---
+
+## 👥 Integrantes do Grupo
+
+- **Enzo Monteiro Maciel** - RM: 563734
+- **Matheus de Almeida Sousa** - RM: 563557
+- **Paulo Estalise** - RM: 563811
+- **Gabriel Bebé Silva** - RM: 562012
+- **Emanuel Italo** - RM: 561337
+
+---
+
+# 📚 Projeto Acadêmico
+
+Projeto desenvolvido para:
+
+```text
+CP4 - Advanced Business Development with .NET - 2026
+```
+
+O objetivo é demonstrar conceitos de desenvolvimento de APIs RESTful com ASP.NET Core, arquitetura em camadas, performance, resiliência, testes automatizados e observabilidade.
