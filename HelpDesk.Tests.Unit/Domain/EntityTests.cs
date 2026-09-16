@@ -1,6 +1,6 @@
 using HelpDesk.API.Domain.Entities;
 
-namespace HelpDesk.Unit.Domain;
+namespace HelpDesk.Tests.Unit.Domain;
 
 public class EntityTests
 {

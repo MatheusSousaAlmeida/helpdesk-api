@@ -1,4 +1,5 @@
 using HelpDesk.API.Application.Interfaces;
+using HelpDesk.API.Domain.Entities;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
@@ -6,15 +7,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Moq;
 
-namespace HelpDesk.Integration.Fixtures;
+namespace HelpDesk.Tests.Integration.Fixtures;
 
-public class CustomWebApplicationFactory : WebApplicationFactory<Program>
+public class RateLimitWebApplicationFactory : WebApplicationFactory<Program>
 {
-    public Mock<IUsuarioUseCase> UsuarioUseCaseMock { get; } = new();
-    public Mock<ITecnicoUseCase> TecnicoUseCaseMock { get; } = new();
-    public Mock<IChamadoUseCase> ChamadoUseCaseMock { get; } = new();
-    public Mock<IComentarioUseCase> ComentarioUseCaseMock { get; } = new();
-
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("Testing");
@@ -31,14 +27,23 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
         builder.ConfigureServices(services =>
         {
             services.RemoveAll(typeof(IUsuarioUseCase));
-            services.RemoveAll(typeof(ITecnicoUseCase));
-            services.RemoveAll(typeof(IChamadoUseCase));
-            services.RemoveAll(typeof(IComentarioUseCase));
 
-            services.AddSingleton(UsuarioUseCaseMock.Object);
-            services.AddSingleton(TecnicoUseCaseMock.Object);
-            services.AddSingleton(ChamadoUseCaseMock.Object);
-            services.AddSingleton(ComentarioUseCaseMock.Object);
+            var usuarioUseCase = new Mock<IUsuarioUseCase>();
+            usuarioUseCase
+                .Setup(x => x.ObterTodosUsuariosAsync(It.IsAny<int>(), It.IsAny<int>()))
+                .ReturnsAsync(new[]
+                {
+                    new Usuario
+                    {
+                        IdUsuario = 1,
+                        Nome = "Usuario Teste",
+                        Email = "usuario.teste@empresa.com",
+                        Departamento = "TI",
+                        Ativo = true
+                    }
+                });
+
+            services.AddSingleton(usuarioUseCase.Object);
         });
     }
 }

@@ -4,9 +4,9 @@ VisualStudioVersion = 18.9.12120.119 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HelpDesk.Api", "HelpDesk.Api\HelpDesk.Api.csproj", "{21A5AE7C-4D0F-4E96-A3F9-51DBA29E04E1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HelpDesk.Unit", "HelpDesk.Unit\HelpDesk.Unit.csproj", "{1F6A41C8-EF6C-4AC8-93C4-AC4DE550A811}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HelpDesk.Tests.Unit", "HelpDesk.Tests.Unit\HelpDesk.Tests.Unit.csproj", "{1F6A41C8-EF6C-4AC8-93C4-AC4DE550A811}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HelpDesk.Integration", "HelpDesk.Integration\HelpDesk.Integration.csproj", "{7574918B-39BF-4E54-A47F-97432554D431}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HelpDesk.Tests.Integration", "HelpDesk.Tests.Integration\HelpDesk.Tests.Integration.csproj", "{7574918B-39BF-4E54-A47F-97432554D431}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,7 +1,7 @@
 using System.Net;
-using HelpDesk.Integration.Fixtures;
+using HelpDesk.Tests.Integration.Fixtures;
 
-namespace HelpDesk.Integration.RateLimit;
+namespace HelpDesk.Tests.Integration.RateLimit;
 
 public class RateLimitTests : IClassFixture<RateLimitWebApplicationFactory>
 {

@@ -3,7 +3,7 @@ using HelpDesk.API.Infrastructure.Data;
 using HelpDesk.API.Infrastructure.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 
-namespace HelpDesk.Integration.Infrastructure;
+namespace HelpDesk.Tests.Integration.Infrastructure;
 
 public class ChamadoRepositoryTests
 {
