@@ -1,7 +1,7 @@
 using System.Net;
-using HelpDesk.Tests.Fixtures;
+using HelpDesk.Integration.Fixtures;
 
-namespace HelpDesk.Tests.HealthChecks;
+namespace HelpDesk.Integration.HealthChecks;
 
 public class HealthCheckTests : IClassFixture<CustomWebApplicationFactory>
 {

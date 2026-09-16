@@ -5,7 +5,7 @@ using HelpDesk.API.Domain.Interfaces;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 
-namespace HelpDesk.Tests.Application;
+namespace HelpDesk.Unit.Application;
 
 public class ComentarioUseCaseTests
 {

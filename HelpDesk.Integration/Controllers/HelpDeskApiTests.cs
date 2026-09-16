@@ -2,10 +2,10 @@ using System.Net;
 using System.Net.Http.Json;
 using HelpDesk.API.Application.Dtos;
 using HelpDesk.API.Domain.Entities;
-using HelpDesk.Tests.Fixtures;
+using HelpDesk.Integration.Fixtures;
 using Moq;
 
-namespace HelpDesk.Tests.Controllers;
+namespace HelpDesk.Integration.Controllers;
 
 public class HelpDeskApiTests : IClassFixture<CustomWebApplicationFactory>
 {
