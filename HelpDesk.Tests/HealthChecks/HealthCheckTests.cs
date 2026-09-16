@@ -13,13 +13,6 @@ public class HealthCheckTests : IClassFixture<CustomWebApplicationFactory>
     }
 
     [Fact]
-    public async Task HealthLive_DeveRetornar200()
-    {
-        var response = await _client.GetAsync("/health/live");
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-    }
-
-    [Fact]
     public async Task HealthControllerLive_DeveRetornar200()
     {
         var response = await _client.GetAsync("/api/health/live");

@@ -23,7 +23,13 @@ public class ChamadoUseCaseTests
     public async Task AdicionarChamado_UsuarioAtivo_DeveIniciarComoAberto()
     {
         _usuarioRepository.Setup(x => x.ObterUmAsync(1))
-            .ReturnsAsync(new Usuario { IdUsuario = 1, Nome = "Usuario", Email = "u@teste.com", Departamento = "TI", Ativo = true });
+            .ReturnsAsync(new Usuario {
+                IdUsuario = 1, 
+                Nome = "Usuario", 
+                Email = "u@teste.com", 
+                Departamento = "TI", 
+                Ativo = true 
+            });
         _chamadoRepository.Setup(x => x.AdicionarAsync(It.IsAny<Chamado>()))
             .ReturnsAsync((Chamado c) => c);
 
@@ -39,7 +45,13 @@ public class ChamadoUseCaseTests
     public async Task AdicionarChamado_UsuarioInativo_DeveFalhar()
     {
         _usuarioRepository.Setup(x => x.ObterUmAsync(1))
-            .ReturnsAsync(new Usuario { IdUsuario = 1, Nome = "Usuario", Email = "u@teste.com", Departamento = "TI", Ativo = false });
+            .ReturnsAsync(new Usuario { 
+                IdUsuario = 1, 
+                Nome = "Usuario", 
+                Email = "u@teste.com", 
+                Departamento = "TI", 
+                Ativo = false 
+            });
 
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(
             () => CriarUseCase().AdicionarChamadoAsync(CriarDto()));
@@ -51,7 +63,13 @@ public class ChamadoUseCaseTests
     public async Task AdicionarChamado_PrioridadeInvalida_DeveFalhar()
     {
         _usuarioRepository.Setup(x => x.ObterUmAsync(1))
-            .ReturnsAsync(new Usuario { IdUsuario = 1, Nome = "Usuario", Email = "u@teste.com", Departamento = "TI", Ativo = true });
+            .ReturnsAsync(new Usuario { 
+                IdUsuario = 1, 
+                Nome = "Usuario", 
+                Email = "u@teste.com", 
+                Departamento = "TI", 
+                Ativo = true 
+            });
 
         var dto = CriarDto();
         dto.Prioridade = "Urgentissima";
@@ -75,7 +93,13 @@ public class ChamadoUseCaseTests
                 DataAbertura = DateTime.UtcNow
             });
         _usuarioRepository.Setup(x => x.ObterUmAsync(1))
-            .ReturnsAsync(new Usuario { IdUsuario = 1, Nome = "Usuario", Email = "u@teste.com", Departamento = "TI", Ativo = true });
+            .ReturnsAsync(new Usuario { 
+                IdUsuario = 1, 
+                Nome = "Usuario", 
+                Email = "u@teste.com", 
+                Departamento = "TI", 
+                Ativo = true 
+            });
 
         var dto = CriarDto();
         dto.IdChamado = 10;
@@ -100,7 +124,13 @@ public class ChamadoUseCaseTests
         };
         _chamadoRepository.Setup(x => x.ObterUmAsync(10)).ReturnsAsync(chamado);
         _usuarioRepository.Setup(x => x.ObterUmAsync(1))
-            .ReturnsAsync(new Usuario { IdUsuario = 1, Nome = "Usuario", Email = "u@teste.com", Departamento = "TI", Ativo = true });
+            .ReturnsAsync(new Usuario { 
+                IdUsuario = 1, 
+                Nome = "Usuario", 
+                Email = "u@teste.com", 
+                Departamento = "TI", 
+                Ativo = true 
+            });
         _chamadoRepository.Setup(x => x.EditarAsync(10, It.IsAny<Chamado>()))
             .ReturnsAsync((int _, Chamado c) => c);
 

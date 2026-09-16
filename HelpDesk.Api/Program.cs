@@ -200,16 +200,6 @@ app.UseResponseCompression();
 app.UseRateLimiter();
 app.UseAuthorization();
 
-app.MapHealthChecks("/health");
-app.MapHealthChecks("/health/live", new HealthCheckOptions
-{
-    Predicate = check => check.Tags.Contains("live")
-});
-app.MapHealthChecks("/health/db", new HealthCheckOptions
-{
-    Predicate = check => check.Tags.Contains("db")
-});
-
 app.MapGet("/metrics", (ApiMetrics metrics) => Results.Ok(metrics.GetSnapshot()));
 app.MapControllers();
 

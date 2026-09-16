@@ -26,7 +26,13 @@ public class ComentarioUseCaseTests
         });
 
         var useCase = new ComentarioUseCase(comentarios.Object, chamados.Object, NullLogger<ComentarioUseCase>.Instance);
-        var dto = new ComentarioRequestDto { IdComentario = 1, IdChamado = 1, Autor = "Tecnico", Texto = "Teste" };
+
+        var dto = new ComentarioRequestDto { 
+            IdComentario = 1, 
+            IdChamado = 1, 
+            Autor = "Tecnico", 
+            Texto = "Teste" 
+        };
 
         await Assert.ThrowsAsync<InvalidOperationException>(() => useCase.AdicionarComentarioAsync(dto));
     }
