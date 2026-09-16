@@ -630,7 +630,7 @@ Exemplo:
 
 ```text
 .NET SDK 8
-Visual Studio 2022
+Visual Studio
 Conta Oracle acessível
 ```
 
@@ -682,7 +682,7 @@ Ou abra:
 HelpDesk.sln
 ```
 
-no Visual Studio 2022 e aperte F5.
+no Visual Studio e aperte F5.
 
 # 🧪 Testes Automatizados
 
