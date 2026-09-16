@@ -59,14 +59,14 @@ Algumas regras de negócio implementadas:
 
 O projeto utiliza uma organização em camadas inspirada nos conceitos de **Clean Architecture**, separando responsabilidades dentro da aplicação.
 
-A Solution possui dois projetos:
+A Solution possui três projetos:
 
 ```text
 HelpDesk.sln
 │
 ├── HelpDesk.Api
-│
-└── HelpDesk.Tests
+├── HelpDesk.Tests.Unit
+└── HelpDesk.Tests.Integration
 ```
 
 A API está organizada da seguinte maneira:
@@ -688,7 +688,7 @@ no Visual Studio 2022 e aperte F5.
 
 A solução possui dois projetos dedicados a testes, separando testes unitários dos testes funcionais e de integração.
 
-## HelpDesk.Unit
+## HelpDesk.Tests.Unit
 
 Responsável pelos testes de unidade das regras de negócio e entidades, executados de forma isolada com mocks quando necessário.
 
@@ -704,10 +704,10 @@ Inclui:
 Para executar somente os testes unitários:
 
 ```bash
-dotnet test HelpDesk.Unit/HelpDesk.Unit.csproj
+dotnet test HelpDesk.Tests.Unit/HelpDesk.Tests.Unit.csproj
 ```
 
-## HelpDesk.Integration
+## HelpDesk.Tests.Integration
 
 Responsável pelos testes funcionais e de integração, validando o ciclo de requisição HTTP da API através de `WebApplicationFactory`.
 
@@ -724,7 +724,7 @@ Inclui:
 Para executar somente os testes funcionais e de integração:
 
 ```bash
-dotnet test HelpDesk.Integration/HelpDesk.Integration.csproj
+dotnet test HelpDesk.Tests.Integration/HelpDesk.Tests.Integration.csproj
 ```
 
 Para executar os dois projetos de testes através da Solution:
