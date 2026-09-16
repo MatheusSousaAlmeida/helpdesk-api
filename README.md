@@ -2,7 +2,7 @@
 
 API RESTful desenvolvida em **ASP.NET Core .NET 8** para gerenciamento de chamados de suporte de TI.
 
-O projeto foi desenvolvido como parte do **CP4 - Advanced Business Development with .NET - 2026**, com foco em arquitetura em camadas, otimização de performance, resiliência, testes automatizados e observabilidade.
+O projeto foi desenvolvido com foco em arquitetura em camadas, otimização de performance, resiliência, testes automatizados e observabilidade.
 
 A aplicação permite cadastrar usuários e técnicos, abrir e gerenciar chamados, atribuir técnicos responsáveis e registrar comentários associados aos atendimentos.
 
