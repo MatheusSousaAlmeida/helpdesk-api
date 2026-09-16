@@ -684,31 +684,53 @@ HelpDesk.sln
 
 no Visual Studio 2022 e aperte F5.
 
----
-
 # 🧪 Testes Automatizados
 
-O projeto possui um único projeto de testes:
+A solução possui dois projetos dedicados a testes, separando testes unitários dos testes funcionais e de integração.
 
-```text
-HelpDesk.Tests
-```
+## HelpDesk.Unit
 
-Nele são implementados:
+Responsável pelos testes de unidade das regras de negócio e entidades, executados de forma isolada com mocks quando necessário.
 
-- Testes de UseCases
+Inclui:
+
+- Testes dos UseCases
 - Testes das regras de negócio
-- Testes de Repository
-- Testes dos Controllers
-- Testes de integração
-- Testes de Health Check
-- Testes de Rate Limit
-- Testes de paginação
+- Testes das entidades
+- Validação de criação e alteração de chamados
+- Validação de prioridade e fluxo de status
+- Validação de paginação na camada de aplicação
 
-Para executar toda a suíte:
+Para executar somente os testes unitários:
 
 ```bash
-dotnet test HelpDesk.Tests/HelpDesk.Tests.csproj
+dotnet test HelpDesk.Unit/HelpDesk.Unit.csproj
+```
+
+## HelpDesk.Integration
+
+Responsável pelos testes funcionais e de integração, validando o ciclo de requisição HTTP da API através de `WebApplicationFactory`.
+
+Inclui:
+
+- Testes dos Controllers
+- Testes de integração dos endpoints
+- Testes de Repository com Entity Framework Core InMemory
+- Testes de Health Check
+- Testes de Rate Limit
+- Testes de paginação via endpoint
+- Validação de códigos HTTP como 201, 204, 404 e 429
+
+Para executar somente os testes funcionais e de integração:
+
+```bash
+dotnet test HelpDesk.Integration/HelpDesk.Integration.csproj
+```
+
+Para executar os dois projetos de testes através da Solution:
+
+```bash
+dotnet test HelpDesk.sln
 ```
 
 Ou:
