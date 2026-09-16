@@ -454,7 +454,7 @@ A API utiliza Health Checks para monitorar sua própria disponibilidade e a cone
 Verifica se a aplicação está em execução.
 
 ```http
-GET /health/live
+GET api/health/live
 ```
 
 ## Banco de dados
@@ -462,7 +462,7 @@ GET /health/live
 Verifica a disponibilidade do Oracle.
 
 ```http
-GET /health/db
+GET api/health/db
 ```
 
 Quando saudável:
