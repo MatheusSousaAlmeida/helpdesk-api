@@ -533,7 +533,7 @@ Após criar o recurso, copie a:
 Connection String
 ```
 
----
+
 
 ## Configuração
 
@@ -546,19 +546,6 @@ O projeto utiliza a configuração:
   }
 }
 ```
-
-Não é recomendado armazenar a Connection String real no repositório público.
-
-### Utilizando User Secrets
-
-No Visual Studio:
-
-```text
-HelpDesk.Api
-→ botão direito
-→ Manage User Secrets
-```
-
 Adicione:
 
 ```json
@@ -569,17 +556,6 @@ Adicione:
 }
 ```
 
-Ou através do terminal:
-
-```bash
-dotnet user-secrets init
-```
-
-```bash
-dotnet user-secrets set "ApplicationInsights:ConnectionString" "SUA_CONNECTION_STRING"
-```
-
----
 
 ## Validando no Azure
 
@@ -639,14 +615,12 @@ Exemplo:
 ```json
 {
   "ConnectionStrings": {
-    "Oracle": "SUA_CONNECTION_STRING_ORACLE"
+    "Oracle": "Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=oracle.fiap.com.br)(PORT=1521))) (CONNECT_DATA=(SERVER=DEDICATED)(SID=ORCL)));User Id=SEU_ID_LOGIN;Password=SUA_SENHA;"
   }
 }
 ```
 
-Substitua pelo endereço, porta, service name e credenciais do ambiente utilizado.
 
-Não publique credenciais reais no GitHub.
 
 ---
 
@@ -657,7 +631,7 @@ Não publique credenciais reais no GitHub.
 ```text
 .NET SDK 8
 Visual Studio 2022
-Oracle acessível
+Conta Oracle acessível
 ```
 
 Para confirmar a instalação do SDK:
@@ -666,11 +640,7 @@ Para confirmar a instalação do SDK:
 dotnet --list-sdks
 ```
 
-Deve existir pelo menos uma versão:
 
-```text
-8.0.xxx
-```
 
 ---
 
@@ -679,7 +649,7 @@ Deve existir pelo menos uma versão:
 Clone o repositório:
 
 ```bash
-git clone URL_DO_REPOSITORIO
+git clone https://github.com/MatheusSousaAlmeida/helpdesk-api
 ```
 
 Entre na pasta:
@@ -712,7 +682,7 @@ Ou abra:
 HelpDesk.sln
 ```
 
-no Visual Studio 2022 e execute o projeto `HelpDesk.Api`.
+no Visual Studio 2022 e aperte F5.
 
 ---
 
@@ -738,13 +708,13 @@ Nele são implementados:
 Para executar toda a suíte:
 
 ```bash
-dotnet test
+dotnet test HelpDesk.Tests/HelpDesk.Tests.csproj
 ```
 
 Ou:
 
-```bash
-dotnet test HelpDesk.Tests/HelpDesk.Tests.csproj
+```text
+Execute pelo Gerenciador de Testes do Visual Studio.
 ```
 
 O resultado esperado é que todos os testes sejam apresentados como:
@@ -1022,30 +992,6 @@ WebApplicationFactory
 
 ---
 
-# ✅ Requisitos Implementados
-
-| Requisito | Implementado |
-|---|---|
-| Organização em Domain, Application, Infrastructure e Presentation | ✅ |
-| Repository Pattern | ✅ |
-| DTOs | ✅ |
-| Mapeamentos | ✅ |
-| Paginação | ✅ |
-| Índices de banco | ✅ |
-| Response Compression | ✅ |
-| Rate Limiting | ✅ |
-| Swagger avançado | ✅ |
-| Testes unitários | ✅ |
-| Testes funcionais/integração | ✅ |
-| Logging estruturado | ✅ |
-| Serilog | ✅ |
-| Health Checks | ✅ |
-| OpenTelemetry | ✅ |
-| Application Insights | ✅ |
-| README | ✅ |
-
----
-
 ## 👥 Integrantes do Grupo
 
 - **Enzo Monteiro Maciel** - RM: 563734
@@ -1055,13 +1001,3 @@ WebApplicationFactory
 - **Emanuel Italo** - RM: 561337
 
 ---
-
-# 📚 Projeto Acadêmico
-
-Projeto desenvolvido para:
-
-```text
-CP4 - Advanced Business Development with .NET - 2026
-```
-
-O objetivo é demonstrar conceitos de desenvolvimento de APIs RESTful com ASP.NET Core, arquitetura em camadas, performance, resiliência, testes automatizados e observabilidade.
